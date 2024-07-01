@@ -1,18 +1,55 @@
-CREATE DATABASE dadt;
-USE dadt;
+CREATE DATABASE IF NOT EXISTS db_module;
+USE db_module;
 
-CREATE TABLE players (
+
+CREATE TABLE IF NOT EXISTS teams (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS seasons (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    year INT UNIQUE,
+    winner_team INT,
+    FOREIGN KEY (winner_team) REFERENCES teams(id)
+);
+
+CREATE TABLE IF NOT EXISTS venues (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255),
-    unique_name VARCHAR(255),
-    ipl_debut DATE,
+    city VARCHAR(255)
+);
+
+CREATE TABLE IF NOT EXISTS players (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    unique_name VARCHAR(255) UNIQUE,
     specialization VARCHAR(255),
-    date_of_birth DATE,
-    matches INT,
     nationality VARCHAR(255)
 );
 
-CREATE TABLE deliveries (
+CREATE TABLE IF NOT EXISTS matches (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    player_of_match INT,
+    venue_id INT,
+    season_id INT,
+    date DATE,
+    toss_decision VARCHAR(255),
+    team_1 INT,
+    team_2 INT,
+    toss_winner_team INT,
+    winner_team INT,
+    is_final BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (player_of_match) REFERENCES players(id),
+    FOREIGN KEY (venue_id) REFERENCES venues(id),
+    FOREIGN KEY (season_id) REFERENCES seasons(id),
+    FOREIGN KEY (team_1) REFERENCES teams(id),
+    FOREIGN KEY (team_2) REFERENCES teams(id),
+    FOREIGN KEY (toss_winner_team) REFERENCES teams(id),
+    FOREIGN KEY (winner_team) REFERENCES teams(id)
+);
+
+CREATE TABLE IF NOT EXISTS deliveries (
     id INT AUTO_INCREMENT PRIMARY KEY,
     match_id INT,
     innings INT,
@@ -41,42 +78,4 @@ CREATE TABLE deliveries (
     FOREIGN KEY (bowler) REFERENCES players(id),
     FOREIGN KEY (player_dismissed) REFERENCES players(id),
     FOREIGN KEY (other_player_dismissed) REFERENCES players(id)
-);
-
-CREATE TABLE matches (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    player_of_match INT,
-    venue_id INT,
-    season_id INT,
-    date DATE,
-    toss_decision VARCHAR(255),
-    team_1 INT,
-    team_2 INT,
-    toss_winner_team INT,
-    winner_team INT,
-    FOREIGN KEY (player_of_match) REFERENCES players(id),
-    FOREIGN KEY (venue_id) REFERENCES venues(id),
-    FOREIGN KEY (season_id) REFERENCES seasons(id),
-    FOREIGN KEY (team_1) REFERENCES teams(id),
-    FOREIGN KEY (team_2) REFERENCES teams(id),
-    FOREIGN KEY (toss_winner_team) REFERENCES teams(id),
-    FOREIGN KEY (winner_team) REFERENCES teams(id)
-);
-
-CREATE TABLE teams (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255)
-);
-
-CREATE TABLE seasons (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    year INT,
-    winner_team INT,
-    FOREIGN KEY (winner_team) REFERENCES teams(id)
-);
-
-CREATE TABLE venues (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255),
-    city VARCHAR(255)
 );

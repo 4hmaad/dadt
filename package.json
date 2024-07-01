@@ -10,5 +10,8 @@
   "license": "ISC",
   "dependencies": {
     "mysql": "^2.18.1"
+  },
+  "devDependencies": {
+    "csv-parser": "^3.0.0"
   }
 }
