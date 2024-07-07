@@ -1,44 +1,43 @@
-CREATE DATABASE IF NOT EXISTS db_module;
-USE db_module;
-
+CREATE DATABASE IF NOT EXISTS cm_dadt;
+USE cm_dadt;
 
 CREATE TABLE IF NOT EXISTS teams (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255)
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS seasons (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    year INT UNIQUE,
-    winner_team INT,
+    id VARCHAR(255) PRIMARY KEY,
+    year INT NOT NULL UNIQUE,
+    winner_team VARCHAR(255) NOT NULL,
     FOREIGN KEY (winner_team) REFERENCES teams(id)
 );
 
 CREATE TABLE IF NOT EXISTS venues (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255),
+    id VARCHAR(255) PRIMARY KEY,
+    name VARCHAR(255) NOT NULL UNIQUE,
     city VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS players (
-    id INT AUTO_INCREMENT PRIMARY KEY,
+    id VARCHAR(255) PRIMARY KEY,
+    unique_name VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(255),
-    unique_name VARCHAR(255) UNIQUE,
     specialization VARCHAR(255),
     nationality VARCHAR(255)
 );
 
 CREATE TABLE IF NOT EXISTS matches (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    player_of_match INT,
-    venue_id INT,
-    season_id INT,
+    id VARCHAR(255) PRIMARY KEY,
+    player_of_match VARCHAR(255),
+    venue_id VARCHAR(255) NOT NULL,
+    season_id VARCHAR(255) NOT NULL,
     date DATE,
     toss_decision VARCHAR(255),
-    team_1 INT,
-    team_2 INT,
-    toss_winner_team INT,
-    winner_team INT,
+    team_1 VARCHAR(255) NOT NULL,
+    team_2 VARCHAR(255) NOT NULL,
+    toss_winner_team VARCHAR(255),
+    winner_team VARCHAR(255),
     is_final BOOLEAN DEFAULT FALSE,
     FOREIGN KEY (player_of_match) REFERENCES players(id),
     FOREIGN KEY (venue_id) REFERENCES venues(id),
@@ -50,26 +49,21 @@ CREATE TABLE IF NOT EXISTS matches (
 );
 
 CREATE TABLE IF NOT EXISTS deliveries (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    match_id INT,
-    innings INT,
+    id VARCHAR(255) PRIMARY KEY,
+    match_id VARCHAR(255) NOT NULL,
+    innings INT NOT NULL,
     ball FLOAT,
-    batting_team INT,
-    bowling_team INT,
-    striker INT,
-    non_striker INT,
-    bowler INT,
+    batting_team VARCHAR(255),
+    bowling_team VARCHAR(255),
+    striker VARCHAR(255),
+    non_striker VARCHAR(255),
+    bowler VARCHAR(255),
     runs_off_bat INT,
     extras INT,
-    wides INT,
-    noballs INT,
-    byes INT,
-    legbyes INT,
-    penalty INT,
     wicket_type VARCHAR(255),
-    player_dismissed INT,
+    player_dismissed VARCHAR(255),
     other_wicket_type VARCHAR(255),
-    other_player_dismissed INT,
+    other_player_dismissed VARCHAR(255),
     FOREIGN KEY (match_id) REFERENCES matches(id),
     FOREIGN KEY (batting_team) REFERENCES teams(id),
     FOREIGN KEY (bowling_team) REFERENCES teams(id),

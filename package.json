@@ -4,12 +4,15 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "seed": "sudo mysql -u root -p < drop_db.sql && node seed.js",
+    "setup": "sudo mysql -u root -p < setup_db.sql"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "mysql": "^2.18.1"
+    "mysql": "^2.18.1",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "csv-parser": "^3.0.0"

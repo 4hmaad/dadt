@@ -1,5 +1,5 @@
 -- Use the database
-USE db_module;
+USE cm_dadt;
 
 -- Disable foreign key checks
 SET FOREIGN_KEY_CHECKS = 0;
