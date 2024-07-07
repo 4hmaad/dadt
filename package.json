@@ -4,9 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "seed": "sudo mysql -u root -p < drop_db.sql && node seed.js",
-    "setup": "sudo mysql -u root -p < setup_db.sql"
+    "seed": "sudo mysql -u root -p < db-scripts/sql/seed.sql && node db-scripts/seed.js",
+    "setup": "sudo mysql -u root -p < db-scripts/sql/setup.sql",
+    "init": "npm run setup && npm run seed",
+    "setup:lab": "mysql < db-scripts/sql/setup.sql",
+    "seed:lab": "mysql < db-scripts/sql/drop.sql && node db-scripts/seed.js"
   },
   "author": "",
   "license": "ISC",

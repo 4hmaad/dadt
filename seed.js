@@ -14,7 +14,7 @@ const VENUES = {}
 const dbConfig = {
   host: 'localhost',
   user: 'root',
-  password: '34439921',
+  password: '',
   database: 'cm_dadt'
 };
 
@@ -348,48 +348,46 @@ const seedVenues = () => {
 };
 
 const seedDeliveries = async ({ seededPlayers }) => {
-  await Promise.all(
-    Object.entries(DELIVERIES).map(async ([matchId, deliveries]) => {
-      await Promise.all(
-        deliveries.map(async (delivery) => {
-          const strikerId = seededPlayers.find(player => player.name === delivery.striker)?.id;
-          const nonStrikerId = seededPlayers.find(player => player.name === delivery.non_striker)?.id;
-          const bowlerId = seededPlayers.find(player => player.name === delivery.bowler)?.id;
-          const playerDismissedId = delivery.player_dismissed ? seededPlayers.find(player => player.name === delivery.player_dismissed)?.id : null;
-          const otherPlayerDismissedId = delivery.other_player_dismissed ? seededPlayers.find(player => player.name === delivery.other_player_dismissed)?.id : null;
+  const promises = []
+  Object.entries(DELIVERIES).forEach(async ([matchId, deliveries]) => {
+    deliveries.forEach(async (delivery) => {
+      const strikerId = seededPlayers.find(player => player.name === delivery.striker)?.id;
+      const nonStrikerId = seededPlayers.find(player => player.name === delivery.non_striker)?.id;
+      const bowlerId = seededPlayers.find(player => player.name === delivery.bowler)?.id;
+      const playerDismissedId = delivery.player_dismissed ? seededPlayers.find(player => player.name === delivery.player_dismissed)?.id : null;
+      const otherPlayerDismissedId = delivery.other_player_dismissed ? seededPlayers.find(player => player.name === delivery.other_player_dismissed)?.id : null;
 
-          const query = `
+      const query = `
         INSERT INTO deliveries (id, match_id, innings, ball, striker, non_striker, bowler, runs_off_bat, extras, wicket_type, player_dismissed, other_wicket_type, other_player_dismissed)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `;
-          const values = [
-            uuid(),
-            matchId,
-            delivery.innings,
-            delivery.ball,
-            strikerId,
-            nonStrikerId,
-            bowlerId,
-            delivery.runs_off_bat ? parseInt(delivery.runs_off_bat) : null,
-            delivery.extras ? parseInt(delivery.extras) : null,
-            delivery.wicket_type,
-            playerDismissedId,
-            delivery.other_wicket_type,
-            otherPlayerDismissedId
-          ];
+      const values = [
+        uuid(),
+        matchId,
+        delivery.innings,
+        delivery.ball,
+        strikerId,
+        nonStrikerId,
+        bowlerId,
+        delivery.runs_off_bat ? parseInt(delivery.runs_off_bat) : null,
+        delivery.extras ? parseInt(delivery.extras) : null,
+        delivery.wicket_type,
+        playerDismissedId,
+        delivery.other_wicket_type,
+        otherPlayerDismissedId
+      ];
 
-          await new Promise((resolve, reject) => {
-            connection.query(query, values, (err) => {
-              if (err) return reject(err);
-              resolve({
-                id: matchId,
-              });
-            });
+      promises.push(new Promise((resolve, reject) => {
+        connection.query(query, values, (err) => {
+          if (err) return reject(err);
+          resolve({
+            id: matchId,
           });
-        }));
-    })
-  );
-
+        });
+      }));
+    });
+  })
+  await Promise.all(promises);
   console.log('Seeded deliveries data');
 };
 
@@ -411,12 +409,17 @@ const main = async () => {
 
   // Seed players and teams data
   const seededPlayers = await seedPlayers();
+  console.log('All players seeded.');
   const seededTeams = await seedTeams();
+  console.log('All teams seeded.');
   const seededSeasons = await seedSeasons(seededTeams);
+  console.log('All seasons seeded.');
   const seededVenues = await seedVenues();
+  console.log('All venues seeded.');
   await seedMatches({ seededTeams, seededSeasons, seededVenues, seededPlayers });
+  console.log('All matches seeded.');
   await seedDeliveries({ seededPlayers });
-
+  console.log('DONE!!.');
   connection.end();
 };
 
